@@ -54,12 +54,11 @@ class Log:
     def get_level(self):
         return self._level
 
+    def get_text(self):
+        return self._text
+
     def __str__(self):
-        try:
-            text = self._text.decode('utf-8')
-        except ValueError:
-            text = str(self._text)
-        return " ".join([self._level.name, str(self._date), text])
+        return " ".join([self.get_level().name, str(self._date), self.get_text()])
 
 
 def _text_decode(text_bytes, encoding_list):
@@ -78,7 +77,7 @@ class Parser:
         )
         self._level_monitor = level_monitor
 
-    def pars(self, log_bytes):
+    def pars(self, log_bytes, date_begin=None):
         parsed_bytes = self._sep_reg.split(log_bytes)
 
         log_list = []
@@ -94,6 +93,8 @@ class Parser:
 
             try:
                 date = datetime.strptime(date_bytes.decode(), '%Y.%m.%d %H:%M:%S.%f')
+                if date_begin is not None and date < date_begin:
+                    continue
             except Exception as err:
                 print('Ошибка разбора даты: ', err)
                 continue

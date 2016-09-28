@@ -15,5 +15,7 @@ setup(
     entry_points={
         'console_scripts':
             ['logmonitor = logmonitor.core:main']
-    }
+    },
+    include_package_data=True,
+    test_suite='tests',
 )
