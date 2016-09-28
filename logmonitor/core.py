@@ -1,9 +1,10 @@
 import time
+import os.path
 from .log import Parser
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-path = r'D:\work\ATM\atm_new\atmserver\log\srvlog'
+path = os.path.join('.' 'logmonitor', 'testdata')           # TODO Переопределить
 
 
 class Handler(FileSystemEventHandler):
