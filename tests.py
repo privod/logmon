@@ -1,12 +1,12 @@
 from unittest import TestCase
 
 from datetime import datetime
-from logmonitor.log import Parser, Level
+from logmon.log import Parser, Level
 
 
 class LogTestCase(TestCase):
     def test_parser(self):
-        with open('logmonitor/testdata/test.log', 'rb') as file:
+        with open('logmon/testdata/test.log', 'rb') as file:
             log_bytes = file.read()
 
             log_list = Parser(Level.INFO).pars(log_bytes, datetime(2016, 6, 24, 12, 30))

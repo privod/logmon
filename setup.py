@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 from os.path import join, dirname
-import logmonitor
+import logmon
 
 setup(
-    name='logmonitor',
-    version=logmonitor.__version__,
+    name='logmon',
+    version=logmon.__version__,
     packages=find_packages(),
     long_description=open(join(dirname(__file__), 'README.rst')).read(),
 
@@ -14,7 +14,7 @@ setup(
 
     entry_points={
         'console_scripts':
-            ['logmonitor = logmonitor.core:main']
+            ['logmon-start = logmon.core:logmon_start']
     },
     include_package_data=True,
     test_suite='tests',
