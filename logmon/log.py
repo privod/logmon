@@ -35,9 +35,10 @@ def letter_list():
     return _letterToLevel.keys()
 
 
-class Log:
+class Log():
 
     def __init__(self, level, date, text):
+        super().__init__()
         self._level = level
         self._date = date
         self._text = text
@@ -59,6 +60,9 @@ class Log:
 
     def __str__(self):
         return " ".join([self.get_level().name, str(self._date), self.get_text()])
+
+    def __repr__(self):
+        return str(self)
 
 
 def _text_decode(text_bytes, encoding_list):
@@ -100,6 +104,7 @@ class Parser:
                 continue
 
             text = _text_decode(text_bytes, ['ascii', 'cp1251', 'utf-8'])
+            text = re.sub('\s+$', '', text)
 
             log = Log(level, date, text)
             log_list.append(log)
