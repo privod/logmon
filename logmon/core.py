@@ -36,7 +36,7 @@ class Handler(PatternMatchingEventHandler):
         self._mon_pool_file_name.add(event.src_path)
 
 
-def files_parse(file_name_pool, data=None, level=None):
+def files_parse(file_name_pool, data=None, level=Level.WARN):
     while len(file_name_pool) > 0:
         file_name = file_name_pool.pop()
         pos_beg = data.get(file_name, {'pos': 0}).get('pos')
@@ -64,6 +64,7 @@ def print_data(data):
         print(key)
         for log in val['log_list']:
             print('\t', log)
+
 
 def logmon_start(argv=None):
     path, *patterns = _set_argv(argv, ['.', '*.log'])
@@ -113,4 +114,4 @@ def logmon_path(argv=None):
     print_data(keep.load())
 
 if __name__ == "__main__":
-    logmon_start()
+    logmon_path()
