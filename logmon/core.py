@@ -31,7 +31,7 @@ class Handler(PatternMatchingEventHandler):
         self._mon_pool_file_name = mon_pool_file_name
 
     def on_modified(self, event):
-        print(event)
+        # print(event)
         # print('Новый файл лога: ', event.src_path)
         self._mon_pool_file_name.add(event.src_path)
 
@@ -39,6 +39,7 @@ class Handler(PatternMatchingEventHandler):
 def files_parse(file_name_pool, data=None, level=Level.WARN):
     while len(file_name_pool) > 0:
         file_name = file_name_pool.pop()
+        print('Обработка лога {}:'.format(file_name))
         pos_beg = data.get(file_name, {'pos': 0}).get('pos')
 
         with open(file_name, 'rb') as file:
@@ -84,7 +85,7 @@ def logmon_start(argv=None):
 
             # Таймер 10 минут
             # if time() - beg_time > 600:
-            if time() - beg_time > 10:
+            if time() - beg_time > 30:
 
                 data = keep.load()
                 files_parse(file_name_pool, data)
@@ -97,7 +98,7 @@ def logmon_start(argv=None):
 
     observer.join()
 
-    print_data(keep.load())
+    # print_data(keep.load())
 
 
 def logmon_path(argv=None):
@@ -111,7 +112,7 @@ def logmon_path(argv=None):
         files_parse(file_name_pool, data)
         keep.save(data)
 
-    print_data(keep.load())
+    # print_data(keep.load())
 
 if __name__ == "__main__":
-    logmon_path()
+    logmon_start()

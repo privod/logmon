@@ -9,7 +9,8 @@ setup(
     long_description=open(join(dirname(__file__), 'README.rst')).read(),
 
     install_requires=[
-        'watchdog'
+        'watchdog',
+        'progressbar2',
     ],
 
     entry_points={

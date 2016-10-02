@@ -1,6 +1,7 @@
 import re
 from enum import Enum
 from datetime import datetime
+import progressbar
 
 
 class Level(Enum):
@@ -85,7 +86,10 @@ class Parser:
         parsed_bytes = self._sep_reg.split(log_bytes)
 
         log_list = []
-        for letter, date_bytes, text_bytes in zip(parsed_bytes[1::3], parsed_bytes[2::3], parsed_bytes[3::3]):
+        count_log = len(parsed_bytes[1::3])
+        bar = progressbar.ProgressBar(max_value=count_log).start()
+        parsed_zip = zip(parsed_bytes[1::3], parsed_bytes[2::3], parsed_bytes[3::3], range(count_log))
+        for letter, date_bytes, text_bytes, i in parsed_zip:
 
             try:
                 level = pars_letter(letter.decode())
@@ -109,6 +113,9 @@ class Parser:
             log = Log(level, date, text)
             log_list.append(log)
 
+            # if (i * 100) % count_log == 0:
+            bar.update(i)
+        bar.finish()
         return log_list
 
 
