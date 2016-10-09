@@ -2,7 +2,9 @@ from time import time, sleep
 import sys
 import os.path
 from glob import glob
+
 import logmon.keeping as keep
+from logmon.conf import Conf
 
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
@@ -52,12 +54,12 @@ def files_parse(file_name_pool, data=None, level=Level.WARN):
         data[file_name]['pos'] = pos_beg + len(file_bytes)
 
 
-def _set_argv(argv, default=None):
-    if argv is None:
-        argv = sys.argv[1:]
-    if len(argv) == 0:
-        argv = default
-    return argv
+# def _set_argv(argv, default=None):
+#     if argv is None:
+#         argv = sys.argv[1:]
+#     if len(argv) == 0:
+#         argv = default
+#     return argv
 
 
 def print_data(data):
@@ -67,13 +69,14 @@ def print_data(data):
             print('\t', log)
 
 
-def logmon_start(argv=None):
-    path, *patterns = _set_argv(argv, ['.', '*.log'])
+def logmon_start(conf_arg=None):
+    # path, *patterns = _set_argv(argv, ['.', '*.log'])
+    conf = Conf(conf_arg)
 
     file_name_pool = set()
     observer = Observer()
-    handler = Handler(patterns=patterns, ignore_directories=True, mon_pool_file_name=file_name_pool)
-    observer.schedule(handler, path=path, recursive=True)
+    handler = Handler(patterns=conf['patterns'], ignore_directories=True, mon_pool_file_name=file_name_pool)
+    observer.schedule(handler, path=conf['path'], recursive=True)
     observer.start()
 
     try:
@@ -101,18 +104,21 @@ def logmon_start(argv=None):
     # print_data(keep.load())
 
 
-def logmon_path(argv=None):
-    path, *patterns = _set_argv(argv, ['.', '*.log'])
+def logmon_path(conf_arg=None):
+    # path, *patterns = _set_argv(argv, ['.', '*.log'])
+    conf = Conf(conf_arg)
 
     # data = {}
 
-    for pattern in patterns:
-        file_name_pool = glob(os.path.join(path, pattern))
+    for pattern in conf['patterns']:
+        file_name_pool = glob(os.path.join(conf['path'], pattern))
         data = keep.load()
         files_parse(file_name_pool, data)
         keep.save(data)
 
+    # DEBUG
+    conf = Conf(conf_arg)
     # print_data(keep.load())
 
 if __name__ == "__main__":
-    logmon_start()
+    logmon_path()
