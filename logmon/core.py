@@ -75,8 +75,8 @@ def logmon_start(conf_arg=None):
 
     file_name_pool = set()
     observer = Observer()
-    handler = Handler(patterns=conf['patterns'], ignore_directories=True, mon_pool_file_name=file_name_pool)
-    observer.schedule(handler, path=conf['path'], recursive=True)
+    handler = Handler(patterns=conf.get('patterns'), ignore_directories=True, mon_pool_file_name=file_name_pool)
+    observer.schedule(handler, path=conf.get('path'), recursive=True)
     observer.start()
 
     try:
@@ -110,15 +110,13 @@ def logmon_path(conf_arg=None):
 
     # data = {}
 
-    for pattern in conf['patterns']:
-        file_name_pool = glob(os.path.join(conf['path'], pattern))
+    for pattern in conf.get('patterns'):
+        file_name_pool = glob(os.path.join(conf.get('path'), pattern))
         data = keep.load()
         files_parse(file_name_pool, data)
         keep.save(data)
 
-    # DEBUG
-    conf = Conf(conf_arg)
-    # print_data(keep.load())
+    # print_data(conf)
 
 if __name__ == "__main__":
     logmon_path()
