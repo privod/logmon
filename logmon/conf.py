@@ -34,7 +34,7 @@ class Conf(object):
             conf_load = json.loads(s)
         except FileNotFoundError:
             pass
-        except json.decoder.JSONDecodeError:
+        except ValueError:
             os.rename(_file_name, _file_name_bad)
 
         # Новые ппареметры поумочанию добавляются в конфигурационный файл
@@ -65,4 +65,4 @@ class Conf(object):
     def _set_conf(self, conf):
         if conf is not None:
             for key, val in conf.items():
-                self._conf.setdefault(key, val)
+                self._conf[key] = val

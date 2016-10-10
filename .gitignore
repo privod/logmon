@@ -1,2 +1,4 @@
 /logmon.cfg
 /data.db
+__pycache__
+*.bad

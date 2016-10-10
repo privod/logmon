@@ -1,1 +1,1 @@
-recursive-include logmonitor/testdata *.*
+recursive-include data *.*
