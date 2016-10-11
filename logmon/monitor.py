@@ -87,9 +87,7 @@ def logmon_start(conf_arg=None):
             sleep(1)
 
             # Таймер 10 минут
-            # if time() - beg_time > 600:
-            if time() - beg_time > 30:
-
+            if time() - beg_time > 600:
                 data = keep.load()
                 files_parse(file_name_pool, data)
                 keep.save(data)

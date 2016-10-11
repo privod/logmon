@@ -15,8 +15,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'logmon-start = logmon.core:logmon_start',
-            'logmon-path = logmon.core:logmon_path',
+            'logmon-start = logmon.monitor:logmon_start',
+            'logmon-path = logmon.monitor:logmon_path',
         ]
     },
     include_package_data=True,
