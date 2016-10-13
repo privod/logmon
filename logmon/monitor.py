@@ -3,13 +3,12 @@ import sys
 import os.path
 from glob import glob
 
-import logmon.keeping as keep
-from logmon.conf import Conf
-
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from logmon.log import Parser, Level
+from .log import Parser, Level
+from .conf import Conf
+import logmon.keeping as keep
 
 # path = os.path.join('.', 'testdata')           # TODO Переопределить
 # print(os.getcwd())

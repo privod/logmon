@@ -11,6 +11,7 @@ setup(
     install_requires=[
         'watchdog',
         'progressbar2',
+        'PyQt5',
     ],
 
     entry_points={

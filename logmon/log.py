@@ -56,6 +56,9 @@ class Log():
     def get_level(self):
         return self._level
 
+    def get_date(self):
+        return self._date
+
     def get_text(self):
         return self._text
 
