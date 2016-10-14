@@ -8,9 +8,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTableView, 
 from PyQt5.QtWidgets import QHeaderView
 
 import logmon.keeping as keep
-# from .log import Log
 
 _re_br = re.compile('[\r\n]')
+
 
 def _br_trim(text):
     res_br = _re_br.search(text)
@@ -18,30 +18,34 @@ def _br_trim(text):
         return text[:res_br.start()]
     return text
 
+
 class TableModel(QAbstractTableModel):
+    _header = ['Имя файла', 'Дата', 'Текст сообщения лога']
+
     def __init__(self, data):
         super().__init__()
         self._data = data
 
     def rowCount(self, parent=None, *args, **kwargs):
-        return len(self._data)
+        return len(self.get_data())
 
     def columnCount(self, parent=None, *args, **kwargs):
-        return 3                                                # TODO Нужно определять динамически
+        return len(self._header)
 
     def data(self, index, role=None):
-        if (role == Qt.DisplayRole):
-            return self._data[index.row()][index.column()]
+        if role == Qt.DisplayRole:
+            return self.get_data()[index.row()][index.column()]
         return None
 
     def headerData(self, p_int, orientation, role=None):
-        if (role != Qt.DisplayRole):
+        if role != Qt.DisplayRole:
             return None
-        if (orientation != Qt.Horizontal):
+        if orientation != Qt.Horizontal:
             return None
+        return self._header[p_int]
 
-        header = ['Имя файла', 'Дата', 'Текст сообщения лога']
-        return header[p_int]
+    def get_data(self):
+        return self._data
 
 
 class LogQMainWindow(QMainWindow):
@@ -53,11 +57,10 @@ class LogQMainWindow(QMainWindow):
         self._text = QTextBrowser()
         self.init_ui()
 
-
     def init_ui(self):
 
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self._text.setText('Test')
+        self._table.clicked.connect(self.table_row_select)
 
         vbox = QVBoxLayout()
         vbox.addWidget(self._table)
@@ -81,13 +84,17 @@ class LogQMainWindow(QMainWindow):
             for log in val['log_list']:
                 date = datetime.strftime(log.get_date(), '%Y.%m.%d %H:%M:%S')
 
-                text = log.get_text()[:100]
-                text = _br_trim(text)
-                if len(text) < len (log.get_text()):
-                    text += '...'
-                item = [log_file_name, date, text]
+                text_trim = log.get_text()[:100]
+                text_trim = _br_trim(text_trim)
+                if len(text_trim) < len (log.get_text()):
+                    text_trim += '...'
+                item = [log_file_name, date, text_trim, path, log.get_text()]
                 data.append(item)
         self._table.setModel(TableModel(data))
+
+    def table_row_select(self, index):
+        data = index.model().get_data()
+        self._text.setPlainText(data[index.row()][4])
 
 
 def main():

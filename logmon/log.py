@@ -2,6 +2,8 @@ import re
 from enum import Enum
 from datetime import datetime
 import progressbar
+# import chardet
+# from chardet.universaldetector import UniversalDetector
 
 
 class Level(Enum):

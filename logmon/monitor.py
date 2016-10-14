@@ -6,8 +6,8 @@ from glob import glob
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from .log import Parser, Level
-from .conf import Conf
+from logmon.log import Parser, Level
+from logmon.conf import Conf
 import logmon.keeping as keep
 
 # path = os.path.join('.', 'testdata')           # TODO Переопределить
