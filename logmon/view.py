@@ -3,7 +3,11 @@ import os.path
 from datetime import datetime
 import re
 
+from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt, QAbstractTableModel
+from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTableView, QTextBrowser, QWidget
 from PyQt5.QtWidgets import QHeaderView
 
@@ -20,7 +24,18 @@ def _br_trim(text):
 
 
 class TableModel(QAbstractTableModel):
-    _header = ['Имя файла', 'Дата', 'Текст сообщения лога']
+    _header = ['Имя файла', 'Уровень', 'Дата', 'Текст сообщения лога']
+    _color = [
+        QBrush(QColor(255, 154, 255)),  # magenta
+        QBrush(QColor(255, 154, 255)),  # magenta
+        QBrush(QColor(255, 154, 255)),  # magenta
+        QBrush(QColor(255, 154, 154)),  # red
+        QBrush(QColor(255, 255, 154)),  # yellow
+        QBrush(QColor(154, 255, 255)),  # blue
+        QBrush(QColor(255, 255, 255)),  # white
+        QBrush(QColor(154, 255, 154)),  # green
+        QBrush(QColor(92, 154, 154)),  # dark blue
+    ]
 
     def __init__(self, data):
         super().__init__()
@@ -32,9 +47,16 @@ class TableModel(QAbstractTableModel):
     def columnCount(self, parent=None, *args, **kwargs):
         return len(self._header)
 
-    def data(self, index, role=None):
+    def data(self, index, role=Qt.DisplayRole):
         if role == Qt.DisplayRole:
             return self.get_data()[index.row()][index.column()]
+        if role == Qt.BackgroundColorRole:
+            level = self.get_data()[index.row()][5]
+            return QBrush(self._color[level])
+            # color = QColor.fromHsv(0, 40, 100)
+            # hsv = color.toHsv()
+            # return QBrush(color)
+
         return None
 
     def headerData(self, p_int, orientation, role=None):
@@ -60,7 +82,8 @@ class LogQMainWindow(QMainWindow):
     def init_ui(self):
 
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self._table.clicked.connect(self.table_row_select)
+        self._table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # self._table.clicked.connect(self.table_row_select)
 
         vbox = QVBoxLayout()
         vbox.addWidget(self._table)
@@ -82,19 +105,24 @@ class LogQMainWindow(QMainWindow):
         for path, val in self._log_data.items():
             log_file_name = os.path.basename(path)
             for log in val['log_list']:
-                date = datetime.strftime(log.get_date(), '%Y.%m.%d %H:%M:%S')
+                date = log.get_date().strftime('%Y.%m.%d %H:%M:%S')
 
-                text_trim = log.get_text()[:100]
+                text_trim = log.get_text()[:80]
                 text_trim = _br_trim(text_trim)
                 if len(text_trim) < len (log.get_text()):
                     text_trim += '...'
-                item = [log_file_name, date, text_trim, path, log.get_text()]
+                item = [log_file_name, log.get_level().name, date, text_trim, path, log.get_level().value, log.get_text()]
                 data.append(item)
         self._table.setModel(TableModel(data))
+        self._table.selectionModel().selectionChanged.connect(self.table_row_select)
 
-    def table_row_select(self, index):
-        data = index.model().get_data()
-        self._text.setPlainText(data[index.row()][4])
+    def table_row_select(self, selected, deselected):
+
+        text_list = []
+        for index in self._table.selectionModel().selectedRows():
+            row = index.model().get_data()[index.row()]
+            text_list.append('Path: {0}\nLevel: {1}\nDate: {2}\n\n{3}'.format(row[4], row[1], row[2], row[6]))
+        self._text.setPlainText('\n----------\n'.join(text_list))
 
 
 def main():

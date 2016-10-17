@@ -39,7 +39,7 @@ class Handler(PatternMatchingEventHandler):
 
 def files_parse(file_name_pool, data=None, level=Level.WARN):
     while len(file_name_pool) > 0:
-        file_name = file_name_pool.pop()
+        file_name = os.path.normpath(file_name_pool.pop())
         print('Обработка лога {}:'.format(file_name))
         pos_beg = data.get(file_name, {'pos': 0}).get('pos')
 

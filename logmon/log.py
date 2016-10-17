@@ -17,6 +17,10 @@ class Level(Enum):
     DEBUG = 7
     VERBOSE = 8
 
+    def __str__(self):
+        return self.name
+
+
 _letterToLevel = {
     'M': Level.EMERG,
     'A': Level.ALERT,
