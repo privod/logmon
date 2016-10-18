@@ -1,6 +1,8 @@
 import re
 from enum import Enum
 from datetime import datetime
+from time import sleep
+
 import progressbar
 # import chardet
 # from chardet.universaldetector import UniversalDetector
@@ -91,12 +93,24 @@ class Parser:
         )
         self._level_monitor = level_monitor
 
-    def pars(self, log_bytes, date_begin=None):
+    def pars(self, log_bytes, date_begin=None, bar_title=None):
         parsed_bytes = self._sep_reg.split(log_bytes)
-
         log_list = []
         count_log = len(parsed_bytes[1::3])
-        bar = progressbar.ProgressBar(max_value=count_log).start()
+
+        if not bar_title:
+            widgets = None
+        else:
+            widgets = [
+                bar_title, ': ',
+                progressbar.Percentage(), ' (',
+                progressbar.SimpleProgress(), ') ',
+                progressbar.Bar(),  ' ',
+                progressbar.Timer(),  ' ',
+                progressbar.ETA(),  ' ',
+            ]
+        bar = progressbar.ProgressBar(max_value=count_log, widgets=widgets).start()
+
         parsed_zip = zip(parsed_bytes[1::3], parsed_bytes[2::3], parsed_bytes[3::3], range(count_log))
         for letter, date_bytes, text_bytes, i in parsed_zip:
 
@@ -123,6 +137,7 @@ class Parser:
             log_list.append(log)
 
             # if (i * 100) % count_log == 0:
+            sleep(0.1)
             bar.update(i)
         bar.finish()
         return log_list

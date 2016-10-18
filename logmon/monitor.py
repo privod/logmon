@@ -40,13 +40,16 @@ class Handler(PatternMatchingEventHandler):
 def files_parse(file_name_pool, data=None, level=Level.WARN):
     while len(file_name_pool) > 0:
         file_name = os.path.normpath(file_name_pool.pop())
-        print('Обработка лога {}:'.format(file_name))
+        # print('Обработка лога {}:'.format(file_name))
         pos_beg = data.get(file_name, {'pos': 0}).get('pos')
 
-        with open(file_name, 'rb') as file:
-            file_bytes = file.read()
+        file_bytes = open(file_name, 'rb').read()
+        parse_bytes = file_bytes[pos_beg:]
+        if not parse_bytes:
+            # print('\tБез изменений')
+            continue
 
-        log_list = Parser(level).pars(file_bytes[pos_beg:])
+        log_list = Parser(level).pars(parse_bytes, bar_title=file_name)
 
         data.setdefault(file_name, {'pos': 0, 'log_list': []})
         data[file_name]['log_list'].extend(log_list)
