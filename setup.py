@@ -18,6 +18,7 @@ setup(
         'console_scripts': [
             'logmon-start = logmon.monitor:logmon_start',
             'logmon-path = logmon.monitor:logmon_path',
+            'logmon-view = logmon.view:main',
         ]
     },
     include_package_data=True,
