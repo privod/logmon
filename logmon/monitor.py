@@ -3,6 +3,7 @@ import sys
 import os.path
 from glob import glob
 
+from progressbar import ProgressBar
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
@@ -38,14 +39,19 @@ class Handler(PatternMatchingEventHandler):
 
 
 def files_parse(file_name_pool, data=None, level=Level.WARN):
+
+    file_count = len(file_name_pool)
+    bar = ProgressBar(max_value=file_count).start()
     while len(file_name_pool) > 0:
         file_name = os.path.normpath(file_name_pool.pop())
+        file_done = file_count - len(file_name_pool)
         # print('Обработка лога {}:'.format(file_name))
         pos_beg = data.get(file_name, {'pos': 0}).get('pos')
 
         file_bytes = open(file_name, 'rb').read()
         parse_bytes = file_bytes[pos_beg:]
         if not parse_bytes:
+            bar.update(file_done)
             # print('\tБез изменений')
             continue
 
@@ -54,6 +60,9 @@ def files_parse(file_name_pool, data=None, level=Level.WARN):
         data.setdefault(file_name, {'pos': 0, 'log_list': []})
         data[file_name]['log_list'].extend(log_list)
         data[file_name]['pos'] = pos_beg + len(file_bytes)
+        bar.update(file_done)
+
+    bar.finish()
 
 
 # def _set_argv(argv, default=None):
