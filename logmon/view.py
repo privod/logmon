@@ -1,9 +1,8 @@
 import sys
 import os.path
-from datetime import datetime
 import re
 
-from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import Qt, QAbstractTableModel
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
@@ -34,7 +33,7 @@ class TableModel(QAbstractTableModel):
         QBrush(QColor(154, 255, 255)),  # blue
         QBrush(QColor(255, 255, 255)),  # white
         QBrush(QColor(154, 255, 154)),  # green
-        QBrush(QColor(92, 154, 154)),  # dark blue
+        QBrush(QColor(92, 154, 154)),   # dark blue
     ]
 
     def __init__(self, data):
@@ -53,9 +52,6 @@ class TableModel(QAbstractTableModel):
         if role == Qt.BackgroundColorRole:
             level = self.get_data()[index.row()][5]
             return QBrush(self._color[level])
-            # color = QColor.fromHsv(0, 40, 100)
-            # hsv = color.toHsv()
-            # return QBrush(color)
 
         return None
 
@@ -74,7 +70,6 @@ class LogQMainWindow(QMainWindow):
 
     def __init__(self, parent=None, flags=Qt.Widget):
         super().__init__(parent, flags)
-        self._log_data = None
         self._table = QTableView()
         self._text = QTextBrowser()
         self.init_ui()
@@ -83,7 +78,6 @@ class LogQMainWindow(QMainWindow):
 
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        # self._table.clicked.connect(self.table_row_select)
 
         vbox = QVBoxLayout()
         vbox.addWidget(self._table)
@@ -100,9 +94,8 @@ class LogQMainWindow(QMainWindow):
         # self.move(frame_geom.topLeft())
 
     def load_data(self, log_data):
-        self._log_data = log_data
         data = []
-        for path, val in self._log_data.items():
+        for path, val in log_data.items():
             log_file_name = os.path.basename(path)
             for log in val['log_list']:
                 date = log.get_date().strftime('%Y.%m.%d %H:%M:%S')
@@ -113,7 +106,12 @@ class LogQMainWindow(QMainWindow):
                     text_trim += '...'
                 item = [log_file_name, log.get_level().name, date, text_trim, path, log.get_level().value, log.get_text()]
                 data.append(item)
-        self._table.setModel(TableModel(data))
+
+        data_sort = QSortFilterProxyModel()
+        data_sort.setSourceModel(TableModel(data))
+        self._table.setModel(data_sort)
+        self._table.setSortingEnabled(True)
+
         self._table.selectionModel().selectionChanged.connect(self.table_row_select)
 
     def table_row_select(self, selected, deselected):
