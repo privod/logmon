@@ -1,13 +1,17 @@
+from datetime import datetime
 from time import time, sleep
-import sys
 import os.path
 from glob import glob
 
+from progressbar import Bar
+from progressbar import Percentage
 from progressbar import ProgressBar
+from progressbar import SimpleProgress
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from logmon.log import Parser, Level
+from logmon.utils import print_enc, str_enc
+from logmon.log import Parser
 from logmon.conf import Conf
 import logmon.keeping as keep
 
@@ -25,10 +29,10 @@ class Handler(PatternMatchingEventHandler):
         self._mon_pool_file_name.add(event.src_path)
 
 
-def files_parse(file_name_pool, data=None, level=Conf().get('level')):
+def files_parse(file_name_pool, data=None, level=Conf().get('level'), bar_widgets=None):
 
     file_count = len(file_name_pool)
-    bar = ProgressBar(max_value=file_count).start()
+    bar = ProgressBar(max_value=file_count, widgets=bar_widgets).start()
     while len(file_name_pool) > 0:
         file_name = os.path.normpath(file_name_pool.pop())
         file_done = file_count - len(file_name_pool)
@@ -60,11 +64,11 @@ def files_parse(file_name_pool, data=None, level=Conf().get('level')):
 #     return argv
 
 
-def print_data(data):
-    for key, val in data.items():
-        print(key)
-        for log in val['log_list']:
-            print('\t', log)
+# def print_data(data):
+#     for key, val in data.items():
+#         print(key)
+#         for log in val['log_list']:
+#             print('\t', log)
 
 
 def logmon_start(conf_arg=None):
@@ -77,6 +81,9 @@ def logmon_start(conf_arg=None):
     observer.schedule(handler, path=conf.get('path'), recursive=True)
     observer.start()
 
+    print_enc('Мониторинг логов на низменения')
+    print_enc('Путь: {}'.format(conf.get('path')))
+    print_enc('Шаблоны поиска: {}'.format(conf.get('patterns')))
     try:
         # data = {}
         beg_time = time()
@@ -87,7 +94,13 @@ def logmon_start(conf_arg=None):
             # Таймер 10 минут
             if time() - beg_time > 600:
                 data = keep.load()
-                files_parse(file_name_pool, data)
+                files_parse(file_name_pool, data, bar_widgets = [
+                    datetime.now().strftime('%Y.%m.%d %H:%M:%S'),
+                    str_enc(' Изменено '),
+                    Bar(), ' ',
+                    Percentage(), ' (',
+                    SimpleProgress(), ')',
+                ])
                 keep.save(data)
 
                 beg_time = time()
@@ -106,13 +119,18 @@ def logmon_path(conf_arg=None):
 
     # data = {}
 
+    print_enc('Обработка логов в каталоге')
+    print_enc('Путь: {}'.format(conf.get('path')))
+    print_enc('Шаблоны поиска: {}'.format(conf.get('patterns')))
+    sleep(0.1)
     for pattern in conf.get('patterns'):
         file_name_pool = glob(os.path.join(conf.get('path'), pattern))
         data = keep.load()
         files_parse(file_name_pool, data)
         keep.save(data)
 
-    # print_data(conf)
+    sleep(0.1)
+    print_enc('Выполнено')
 
 if __name__ == "__main__":
     logmon_path()
