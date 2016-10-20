@@ -35,7 +35,6 @@ class Conf(object):
         try:
             s = open(_file_name).read()
             conf_load = json.loads(s)
-            conf_load['level'] = Level(conf_load['level'])
         except FileNotFoundError:
             pass
         except ValueError:
@@ -64,6 +63,8 @@ class Conf(object):
 
         # Агрумены конструктора, более высокий приоритет
         self._set_conf(conf_arg)
+
+        self._conf['level'] = Level(self.get('level'))
 
     def get(self, key):
         return self._conf.get(key)
