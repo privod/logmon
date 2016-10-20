@@ -118,7 +118,9 @@ class LogQMainWindow(QMainWindow):
 
         text_list = []
         for index in self._table.selectionModel().selectedRows():
-            row = index.model().get_data()[index.row()]
+            source_index = index.model().mapToSource(index)
+            source_model = index.model().sourceModel()
+            row = source_model.get_data()[source_index.row()]
             text_list.append('Path: {0}\nLevel: {1}\nDate: {2}\n\n{3}'.format(row[4], row[1], row[2], row[6]))
         self._text.setPlainText('\n----------\n'.join(text_list))
 
