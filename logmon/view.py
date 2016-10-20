@@ -6,7 +6,7 @@ from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import Qt, QAbstractTableModel
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.QtWidgets import QAbstractItemView, QSplitter
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTableView, QTextBrowser, QWidget
 from PyQt5.QtWidgets import QHeaderView
 
@@ -80,8 +80,11 @@ class LogQMainWindow(QMainWindow):
         self._table.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self._table)
-        vbox.addWidget(self._text)
+        splitter = QSplitter()
+        splitter.setOrientation(Qt.Vertical)
+        vbox.addWidget(splitter)
+        splitter.addWidget(self._table)
+        splitter.addWidget(self._text)
 
         widget = QWidget(flags=Qt.Widget)
         widget.setLayout(vbox)
