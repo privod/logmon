@@ -11,19 +11,6 @@ from logmon.log import Parser, Level
 from logmon.conf import Conf
 import logmon.keeping as keep
 
-# path = os.path.join('.', 'testdata')           # TODO Переопределить
-# print(os.getcwd())
-
-# class FileParcer(Parser):
-#
-#     def __init__(self, file_name = None, level_monitor=Level.WARN):
-#         super().__init__(level_monitor)
-#         self.file_name = file_name
-#
-#     def pars(self, date_begin=None):
-#         with open(self.file_name, 'rb') as file:
-#             return super().pars(file.read(), date_begin)
-
 
 class Handler(PatternMatchingEventHandler):
 
