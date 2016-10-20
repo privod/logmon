@@ -10,7 +10,6 @@ from progressbar import SimpleProgress
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
 
-from logmon.utils import print_enc, str_enc
 from logmon.log import Parser
 from logmon.conf import Conf
 import logmon.keeping as keep
@@ -81,9 +80,9 @@ def logmon_start(conf_arg=None):
     observer.schedule(handler, path=conf.get('path'), recursive=True)
     observer.start()
 
-    print_enc('Мониторинг логов на низменения')
-    print_enc('Путь: {}'.format(conf.get('path')))
-    print_enc('Шаблоны поиска: {}'.format(conf.get('patterns')))
+    print('Мониторинг логов на низменения')
+    print('Путь: {}'.format(conf.get('path')))
+    print('Шаблоны поиска: {}'.format(conf.get('patterns')))
     try:
         # data = {}
         beg_time = time()
@@ -96,7 +95,7 @@ def logmon_start(conf_arg=None):
                 data = keep.load()
                 files_parse(file_name_pool, data, bar_widgets = [
                     datetime.now().strftime('%Y.%m.%d %H:%M:%S'),
-                    str_enc(' Изменено '),
+                    ' Изменено ',
                     Bar(), ' ',
                     Percentage(), ' (',
                     SimpleProgress(), ')',
@@ -119,9 +118,9 @@ def logmon_path(conf_arg=None):
 
     # data = {}
 
-    print_enc('Обработка логов в каталоге')
-    print_enc('Путь: {}'.format(conf.get('path')))
-    print_enc('Шаблоны поиска: {}'.format(conf.get('patterns')))
+    print('Обработка логов в каталоге')
+    print('Путь: {}'.format(conf.get('path')))
+    print('Шаблоны поиска: {}'.format(conf.get('patterns')))
     sleep(0.1)
     for pattern in conf.get('patterns'):
         file_name_pool = glob(os.path.join(conf.get('path'), pattern))
@@ -130,7 +129,7 @@ def logmon_path(conf_arg=None):
         keep.save(data)
 
     sleep(0.1)
-    print_enc('Выполнено')
+    print('Выполнено')
 
 if __name__ == "__main__":
     logmon_path()

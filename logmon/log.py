@@ -2,8 +2,6 @@ import re
 from enum import Enum
 from datetime import datetime
 
-from logmon.utils import print_enc
-
 
 class Level(Enum):
     EMERG = 0
@@ -114,7 +112,7 @@ class Parser:
                 if level.value > self._level_monitor.value:
                     continue
             except Exception as err:
-                print_enc('Ошибка разбора уровня логирования: {}'.format(err))
+                print('Ошибка разбора уровня логирования: {}'.format(err))
                 continue
 
             try:
@@ -122,7 +120,7 @@ class Parser:
                 if date_begin is not None and date < date_begin:
                     continue
             except Exception as err:
-                print_enc('Ошибка разбора даты: {}'.format(err))
+                print('Ошибка разбора даты: {}'.format(err))
                 continue
 
             text = _text_decode(text_bytes, ['ascii', 'cp1251', 'utf-8'])
