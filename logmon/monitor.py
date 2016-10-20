@@ -38,7 +38,7 @@ class Handler(PatternMatchingEventHandler):
         self._mon_pool_file_name.add(event.src_path)
 
 
-def files_parse(file_name_pool, data=None, level=Level.WARN):
+def files_parse(file_name_pool, data=None, level=Conf().get('level')):
 
     file_count = len(file_name_pool)
     bar = ProgressBar(max_value=file_count).start()

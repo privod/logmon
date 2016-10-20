@@ -2,10 +2,13 @@ import json
 import os
 import sys
 
+from logmon.log import Level
+
 _file_name = 'logmon.cfg'
 _file_name_bad = _file_name + '.bad'
 _default = {
     'path': 'data',
+    'level': Level.WARN.value,
     'patterns': ['*.log'],
 }
 
@@ -32,6 +35,7 @@ class Conf(object):
         try:
             s = open(_file_name).read()
             conf_load = json.loads(s)
+            conf_load['level'] = Level(conf_load['level'])
         except FileNotFoundError:
             pass
         except ValueError:
@@ -50,10 +54,12 @@ class Conf(object):
 
         # Агрумены командной строки, более высокий приоритет
         conf_sys = {}
-        if len(sys.argv) > 1:
+        try:
             conf_sys['path']= sys.argv[1]
-        if len(sys.argv) > 2:
-            conf_sys['patterns'] = sys.argv[2:]
+            conf_sys['level']= sys.argv[2]
+            conf_sys['patterns'] = sys.argv[3:]
+        except:
+            pass
         self._set_conf(conf_sys)
 
         # Агрумены конструктора, более высокий приоритет
