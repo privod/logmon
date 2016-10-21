@@ -9,7 +9,7 @@ echo Создаю новое виртуальное окуржение "env" ...
 python35 -m venv env
 if %errorlevel% neq 0 goto error
 
-call install.cmd
+call upgrade.cmd
 goto exit
 
 :error

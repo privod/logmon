@@ -3,7 +3,7 @@
 call env\Scripts\activate
 if %errorlevel% neq 0 goto error
 
-python setup.py install
+env\Scripts\logmon-start
 if %errorlevel% neq 0 goto error
 
 goto exit
