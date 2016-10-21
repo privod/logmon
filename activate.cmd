@@ -1,3 +1,6 @@
 @echo off
 
-start env\Scripts\activate
+call env\Scripts\activate
+
+CMD /K 
+

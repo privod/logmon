@@ -3,7 +3,7 @@
 call env\Scripts\activate
 if %errorlevel% neq 0 goto error
 
-env\Scripts\logmon-path
+logmon-path.exe
 if %errorlevel% neq 0 goto error
 
 goto exit
@@ -13,3 +13,4 @@ pause
 exit
 
 :exit
+pause

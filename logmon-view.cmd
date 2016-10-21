@@ -3,7 +3,7 @@
 call env\Scripts\activate
 if %errorlevel% neq 0 goto error
 
-env\Scripts\logmon-start
+logmon-view.exe
 if %errorlevel% neq 0 goto error
 
 goto exit
