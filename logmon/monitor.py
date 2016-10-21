@@ -94,11 +94,10 @@ def logmon_start(conf_arg=None):
             if time() - beg_time > 600:
                 data = keep.load()
                 files_parse(file_name_pool, data, bar_widgets = [
-                    datetime.now().strftime('%Y.%m.%d %H:%M:%S'),
-                    ' Изменено ',
+                    datetime.now().strftime('%Y.%m.%d %H:%M:%S'), ' ',
+                    SimpleProgress(format='Изменено %(max_value)d, обработано %(value)d'), ' ',
                     Bar(), ' ',
-                    Percentage(), ' (',
-                    SimpleProgress(), ')',
+                    Percentage(),
                 ])
                 keep.save(data)
 
